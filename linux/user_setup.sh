@@ -1,11 +1,9 @@
 #!/bin/bash
-
-#!/bin/bash
 clear
 
 # Vars
 user='seshu'
-tasks=7
+tasks=9
 
 # ANSI escape codes
 RED='\e[31m'
@@ -236,3 +234,62 @@ fi'
 
 task_complete
 sub_tasks "+" g_exts
+
+
+# 8. UV
+task_init "uv Python manager"
+
+if !(which uv 1>/dev/null 2>&1); then
+    terminal_task "curl -Lf https://astral.sh/uv/install.sh | sh"
+fi
+
+task_complete
+
+
+# 9. Vscode
+task_init "Visual Studio Code"
+
+declare -A code_exts
+
+code_exts["christian-kohler.path-intellisense"]="Path Intellisense"
+code_exts["enkia.tokyo-night"]="Tokyo Night"
+code_exts["mads-hartmann.bash-ide-vscode"]="Bash IDE"
+code_exts["ms-python.python"]="Python"
+code_exts["ms-toolsai.jupyter"]="Jupyter"
+code_exts["njpwerner.autodocstring"]="Python Docstring Generator"
+code_exts["pkief.material-icon-theme"]="Material Icon Theme"
+code_exts["usernamehw.errorlens"]="Error Lens"
+
+code_sets["1"]="User settings applied"
+
+terminal_task "
+GREEN='\e[32m'
+BOLD='\e[1m'
+RESET='\e[0m'
+
+installed=\$(code --list-extensions)
+for ext in "${!code_exts[@]}"; do
+    if !(echo \$installed | grep -q \$ext); then
+        code --install-extension \$ext
+    fi
+    echo -e "\$ext: \${BOLD}\${GREEN}Installed\${RESET}"
+done
+"
+
+cat <<EOF > ~/.config/Code/User/settings.json
+{
+    "files.autoSave": "afterDelay",
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "editor.cursorBlinking": "expand",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "workbench.colorTheme": "Tokyo Night",
+    "workbench.iconTheme": "material-icon-theme",
+    "files.autoSaveDelay": 500,
+    "jupyter.askForKernelRestart": false,
+    "notebook.lineNumbers": "on",
+}
+EOF
+
+task_complete
+sub_tasks "+" code_exts code_sets
