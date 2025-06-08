@@ -1,0 +1,238 @@
+#!/bin/bash
+
+#!/bin/bash
+clear
+
+# Vars
+user='seshu'
+tasks=7
+
+# ANSI escape codes
+RED='\e[31m'
+GREEN='\e[32m'
+YELLOW='\e[33m'
+BLUE='\e[34m'
+MAGENTA='\e[35m'
+CYAN='\e[36m'
+BOLD='\e[1m'
+RESET='\e[0m'
+CLEAR='\r\033[K'
+
+# Verify user
+if [[ "$(whoami)" != "${user}" ]]; then
+    echo -e "${RED}Error: Invalid UID. Please run this script as user.${RESET}"
+    exit 1
+else
+    echo -e "${BOLD}${CYAN}--- User Setup: \"$(whoami)\" ---${RESET}"
+fi
+
+# ---------------------------------------------------------------------
+task=0
+current_task=''
+
+terminal_task() {
+    code=${@}
+    ptyxis -- bash -c "echo -ne '\033]0;$current_task\007'; $code" 1>/dev/null 2>&1
+}
+
+task_init() {
+    current_task="${*}"
+    ((task++))
+    echo -ne " [${BOLD}${YELLOW}~${RESET}] ${task}/${tasks}: $current_task"
+}
+
+task_complete() {
+    local title
+    if [[ -z $1 ]]; then
+        title=$current_task
+    else
+        title="${*}"
+    fi
+    echo -e "${CLEAR} [${BOLD}${GREEN}+${RESET}] ${task}/${tasks}: ${title}"
+}
+
+sub_tasks() {
+    local inc=0
+    local ind=$1
+    local -n tasks=$2
+
+    local tempfile=$(mktemp)
+    trap "rm -rf '$tempfile'" RETURN
+
+    for arr_ref in "${@:2}"; do
+        local -n array="$arr_ref"
+        printf '%s\n' "${array[@]}" >> $tempfile
+    done
+
+    if [[ "$ind" == "+" ]]; then
+        ind="${BOLD}${GREEN}+${RESET}"
+    elif [[ "$ind" == "-" ]]; then
+        ind="${BOLD}${RED}-${RESET}"
+    fi
+
+    sort $tempfile | while read -r task; do
+        ((inc++))
+        printf "     [$ind] %2d. $task\n" "$inc"
+    done
+}
+
+# ---------------------------------------------------------------------
+
+# 1. UI Settings
+task_init "UI Settings"
+
+declare -A ui_settings
+
+ui_settings["1"]="Dark theme applied"
+ui_settings["2"]="Hot corner disabled"
+ui_settings["3"]="Middle click minimize"
+ui_settings["4"]="Middle click paste disabled"
+ui_settings["5"]="Show batter level"
+
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.interface enable-hot-corners false
+gsettings set org.gnome.desktop.interface gtk-enable-primary-paste false
+gsettings set org.gnome.desktop.interface show-battery-percentage true
+gsettings set org.gnome.desktop.wm.preferences action-middle-click-titlebar 'minimize'
+
+task_complete
+sub_tasks "+" ui_settings
+
+
+# 2. Power Settings
+task_init "Power Settings"
+
+declare -A power_settings
+
+power_settings["1"]="Automatic suspend on AC disabled"
+power_settings["2"]="Screen turnoff disabled"
+
+gsettings set org.gnome.desktop.session idle-delay 0
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+
+task_complete
+sub_tasks "+" power_settings
+
+
+# 3. Git Config
+task_init "Git Configuration"
+
+git config --global user.name "SeshuTarapatla"
+git config --global user.email "seshu.tarapatla@gmail.com"
+
+task_complete
+
+
+# 4. Text Editor
+task_init "Text Editor defaults"
+
+declare -A editor
+
+editor["1"]="Highlight current line"
+editor["2"]="Line numbers enabled"
+editor["3"]="Tab width set to 4"
+
+gsettings set org.gnome.TextEditor show-line-numbers true
+gsettings set org.gnome.TextEditor highlight-current-line true
+gsettings set org.gnome.TextEditor tab-width 4
+
+task_complete
+sub_tasks "+" editor
+
+
+# 5. Terminal Settings
+task_init "Terminal Settings"
+
+declare -A terminal
+
+terminal["1"]="Restore Window size disabled"
+
+task_complete
+sub_tasks "+" terminal
+
+
+# 6. Bashrc
+task_init "Bashrc Customization"
+
+update_bashrc() {
+	if !(cat ~/.bashrc | grep -q "${1}"); then
+		echo $1 >> ~/.bashrc
+	fi
+}
+
+declare -A bashrc
+
+bashrc["1"]="alias be: Edit Bashrc"
+bashrc["2"]="alias bs: Source Bashrc"
+bashrc["3"]="alias up: DNF Upgrade"
+bashrc["4"]="fzf  Alt+C shortcut"
+bashrc["5"]="fzf Ctrl+T shortcut"
+
+update_bashrc 'alias be="code ~/.bashrc"'
+update_bashrc 'alias bs="source ~/.bashrc"'
+update_bashrc 'alias up="sudo dnf upgrade -y"'
+update_bashrc "export FZF_ALT_C_COMMAND='fd . \$HOME --type d --hidden 2>/dev/null'"
+update_bashrc "export FZF_CTRL_T_COMMAND='fd . \$HOME --hidden 2>/dev/null'"
+update_bashrc 'eval "$(fzf --bash)"'
+
+task_complete
+sub_tasks "+" bashrc
+
+
+# 7. Gnome Extensions
+task_init "Gnome Extensions"
+
+declare -A g_exts
+
+g_exts["1"]="Auto Move Windows"
+g_exts["2"]="Blur My Shell"
+g_exts["3"]="Desktop Icons"
+g_exts["4"]="Net Speed"
+g_exts["5"]="Places Indicator"
+
+terminal_task '
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+BOLD="\e[1m"
+RESET="\e[0m"
+
+declare -A extensions
+extensions["auto-move-windows@gnome-shell-extensions.gcampax.github.com"]="16"
+extensions["blur-my-shell@aunetx"]="3193"
+extensions["ding@rastersoft.com"]="2087"
+extensions["netspeed@alynx.one"]="4478"
+extensions["places-menu@gnome-shell-extensions.gcampax.github.com"]="8"
+
+installed=$(gnome-extensions list)
+temp=$(mktemp -d)
+trap "rm -rf \"$temp\"" EXIT
+cd $temp
+for uuid in "${!extensions[@]}"; do
+	if (echo $installed | grep -q $uuid); then
+		gnome-extensions enable $uuid
+		echo -e "${uuid%@*}: ${BOLD}${GREEN}Enabled${RESET}"
+	else
+		echo ""
+		gnome-shell-extension-installer "${extensions[$uuid]}" --no-install
+		gnome-extensions install $uuid*.zip
+		export new_extensions=1
+		echo -e "${uuid%@*}: ${BOLD}${BLUE}Installed${RESET}\n"
+	fi
+done
+if [ -v new_extensions ]; then
+	echo -e "${BOLD}${YELLOW}ALERT${RESET}: New Extensions installed. \nDue to Wayland restrictions - you have to restart the session and run this script again to enable them.\n"
+	read -p ">>> Do you want to logout? [Y/n]: " answer
+	answer=${answer:-y}
+	if [[ "${answer}" =~ ^[Yy]$ ]]; then
+		echo -e "Logging out"
+		sleep 1
+		gnome-session-quit --logout --no-prompt
+	else
+		echo -e "Logout declined"
+		sleep 1
+	fi
+fi'
+
+task_complete
+sub_tasks "+" g_exts

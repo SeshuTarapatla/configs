@@ -3,7 +3,7 @@ clear
 
 # Vars
 user='root'
-tasks=10
+tasks=5
 
 # ANSI escape codes
 RED='\e[31m'
@@ -37,11 +37,17 @@ terminal_task() {
 task_init() {
     current_task="${*}"
     ((task++))
-    echo -ne " [${BOLD}${YELLOW}~${RESET}] ${task}/${tasks}: $current_task"
+    echo -ne " [${BOLD}${YELLOW}~${RESET}] ${task}/${tasks}: ${current_task}"
 }
 
 task_complete() {
-    echo -e "${CLEAR} [${BOLD}${GREEN}+${RESET}] ${task}/${tasks}: ${*}"
+    local title
+    if [[ -z $1 ]]; then
+        title=$current_task
+    else
+        title="${*}"
+    fi
+    echo -e "${CLEAR} [${BOLD}${GREEN}+${RESET}] ${task}/${tasks}: ${title}"
 }
 
 sub_tasks() {
@@ -116,7 +122,7 @@ bloat["abrt"]="Problem Reporting"
 bloat["rhythmbox"]="Rhythmbox"
 bloat["gnome-tour"]="Tour"
 
-# terminal_task "dnf remove -y ${!bloat[@]}"
+terminal_task "dnf remove -y ${!bloat[@]}"
 
 task_complete "Bloatware removed"
 sub_tasks "-" bloat
@@ -191,10 +197,11 @@ task_init "Applying ROG Settings"
 
 declare -A rog_settings
 
-rog_settings["1"]="Nvidia Service enabled"
-rog_settings["2"]="Asusd and Supergfx enabled"
+rog_settings["1"]="Asusd and Supergfx enabled"
+rog_settings["2"]="Charge limit set to 80"
 rog_settings["3"]="Keyboard backlit enabled"
 rog_settings["4"]="Lightbar disabled"
+rog_settings["5"]="Nvidia Service enabled"
 
 terminal_task "
 systemctl enable nvidia-hibernate nvidia-suspend nvidia-resume nvidia-powerd asusd supergfxd
@@ -202,6 +209,7 @@ systemctl start asusd
 asusctl aura static -c ffffff
 asusctl aura-power lightbar
 asusctl --kbd-bright high
+asusctl --chg-limit 80
 "
 
 task_complete "ROG settings applied"
