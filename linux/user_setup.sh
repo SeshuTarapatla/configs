@@ -3,7 +3,7 @@ clear
 
 # Vars
 user='seshu'
-tasks=9
+tasks=10
 
 # ANSI escape codes
 RED='\e[31m'
@@ -245,8 +245,38 @@ fi
 
 task_complete
 
+# 9. Nerd Fonts
+task_init "Nerd Fonts"
 
-# 9. Vscode
+declare -A fonts
+
+fonts["1"]="JetBrains Mono"
+
+terminal_task '
+font="JetBrainsMonoNerdFontMono-Regular.ttf"
+url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz"
+fonts_dir="$HOME/.local/share/fonts"
+
+mkdir -p $fonts_dir
+if !(fc-list | grep -q $font); then
+    echo "Font missing. Downloading from GitHub."
+    temp=$(mktemp -d)
+    trap "rm -rf $temp" EXIT
+    cd $temp
+    curl -LO $url
+    file=$(basename $url)
+    tar -xf $file
+    cp $font $fonts_dir
+    echo "Font copied. Updating cache."
+    fc-cache -f
+fi
+'
+
+task_complete
+sub_tasks "+" fonts
+
+
+# 10. Vscode
 task_init "Visual Studio Code"
 
 declare -A code_exts
@@ -278,16 +308,19 @@ done
 
 cat <<EOF > ~/.config/Code/User/settings.json
 {
-    "files.autoSave": "afterDelay",
-    "git.autofetch": true,
-    "git.enableSmartCommit": true,
     "editor.cursorBlinking": "expand",
     "editor.cursorSmoothCaretAnimation": "on",
-    "workbench.colorTheme": "Tokyo Night",
-    "workbench.iconTheme": "material-icon-theme",
+    "editor.wordWrap": "on",
+    "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
     "jupyter.askForKernelRestart": false,
     "notebook.lineNumbers": "on",
+    "workbench.colorTheme": "Tokyo Night",
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.fontFamily": "JetBrainsMono Nerd Font Mono",
+    "editor.fontLigatures": true
 }
 EOF
 
