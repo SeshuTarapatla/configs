@@ -305,24 +305,7 @@ for ext in "${!code_exts[@]}"; do
     echo -e "\$ext: \${BOLD}\${GREEN}Installed\${RESET}"
 done
 "
-
-cat <<EOF > ~/.config/Code/User/settings.json
-{
-    "editor.cursorBlinking": "expand",
-    "editor.cursorSmoothCaretAnimation": "on",
-    "editor.wordWrap": "on",
-    "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 500,
-    "git.autofetch": true,
-    "git.enableSmartCommit": true,
-    "jupyter.askForKernelRestart": false,
-    "notebook.lineNumbers": "on",
-    "workbench.colorTheme": "Tokyo Night",
-    "workbench.iconTheme": "material-icon-theme",
-    "editor.fontFamily": "JetBrainsMono Nerd Font Mono",
-    "editor.fontLigatures": true
-}
-EOF
+curl -Lsf "https://raw.githubusercontent.com/SeshuTarapatla/configs/refs/heads/main/vscode/settings.json" > "${HOME}/.config/Code/User/settings.json"
 
 task_complete
 sub_tasks "+" code_exts code_sets
