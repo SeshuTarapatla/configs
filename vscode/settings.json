@@ -1,0 +1,15 @@
+{
+    "editor.cursorBlinking": "expand",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.wordWrap": "on",
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 500,
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "jupyter.askForKernelRestart": false,
+    "notebook.lineNumbers": "on",
+    "workbench.colorTheme": "Tokyo Night",
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.fontFamily": "JetBrainsMono Nerd Font Mono",
+    "editor.fontLigatures": true
+}
