@@ -150,11 +150,12 @@ rpms["rog-control-center"]="ROG Control Center"
 rpms["supergfxctl"]="Supergfxctl"
 rpms["xorg-x11-drv-nvidia-cuda"]="Nvidia Packages"
 
-flatpaks["com.mattjakeman.ExtensionManager"]="Gnome Extensions Manager"
-flatpaks["org.qbittorrent.qBittorrent"]="QBittorent"
-flatpaks["com.spotify.Client"]="Spotify"
-flatpaks["org.telegram.desktop"]="Telegram"
 flatpaks["app.zen_browser.zen"]="Zen Browser"
+flatpaks["com.mattjakeman.ExtensionManager"]="Gnome Extensions Manager"
+flatpaks["com.spotify.Client"]="Spotify"
+flatpaks["org.pgadmin.pgadmin4"]="PgAdmin4"
+flatpaks["org.qbittorrent.qBittorrent"]="QBittorent"
+flatpaks["org.telegram.desktop"]="Telegram"
 
 urls["https://github.com/brunelli/gnome-shell-extension-installer/raw/master/gnome-shell-extension-installer"]="Gnome Shell Extension Installer"
 
