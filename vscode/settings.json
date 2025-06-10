@@ -1,6 +1,8 @@
 {
     "editor.cursorBlinking": "expand",
     "editor.cursorSmoothCaretAnimation": "on",
+    "editor.fontFamily": "JetBrainsMono Nerd Font Mono",
+    "editor.fontLigatures": true,
     "editor.wordWrap": "on",
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
@@ -8,8 +10,8 @@
     "git.enableSmartCommit": true,
     "jupyter.askForKernelRestart": false,
     "notebook.lineNumbers": "on",
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.autoImportCompletions": true,
     "workbench.colorTheme": "Tokyo Night",
-    "workbench.iconTheme": "material-icon-theme",
-    "editor.fontFamily": "JetBrainsMono Nerd Font Mono",
-    "editor.fontLigatures": true
+    "workbench.iconTheme": "material-icon-theme"
 }

@@ -3,7 +3,7 @@ clear
 
 # Vars
 user='seshu'
-tasks=10
+tasks=11
 
 # ANSI escape codes
 RED='\e[31m'
@@ -281,6 +281,7 @@ task_init "Visual Studio Code"
 
 declare -A code_exts
 
+code_exts["charliermarsh.ruff"]="Ruff"
 code_exts["christian-kohler.path-intellisense"]="Path Intellisense"
 code_exts["enkia.tokyo-night"]="Tokyo Night"
 code_exts["mads-hartmann.bash-ide-vscode"]="Bash IDE"
@@ -309,3 +310,68 @@ curl -Lsf "https://raw.githubusercontent.com/SeshuTarapatla/configs/refs/heads/m
 
 task_complete
 sub_tasks "+" code_exts code_sets
+
+
+# 11. Android Emulator
+task_init "Android Emulator"
+emulator_name="emulator"
+
+declare -A android
+
+android["1"]="SDK Tools"
+android["2"]="Licenses"
+android["3"]="Android 14 [api 34]"
+android["4"]="Pixel 8 Pro AVD"
+
+if !(avdmanager list avd 2>/dev/null | grep emulator 1>/dev/null 2>&1); then
+    terminal_task '
+    update_bashrc() {
+        if !(cat ~/.bashrc | grep -q "${1}"); then
+            echo $1 >> ~/.bashrc
+        fi
+    }
+    export ANDROID_HOME="$HOME/.local/android"
+    update_bashrc "export ANDROID_HOME=$ANDROID_HOME"
+    update_bashrc "export PATH=\"\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/emulator:\$PATH\""
+    source ~/.bashrc
+
+    if !(which sdkmanager 2>/dev/null); then
+        echo "1. Fetching latest download url for SDK tools"
+        home_page="https://developer.android.com/studio#command-tools"
+        download_url=$(curl $home_page | grep -oP "https://dl.google.com/android/repository/commandlinetools-linux-[0-9]+_latest.zip" | head -n 1)
+        echo -e "URL: $download_url\n"
+        echo "2. Downloading latest SDK tools"
+        temp=$(mktemp -d)
+        trap "rm -rfv $temp" EXIT
+        cd $temp
+        wget $download_url
+        unzip commandlinetools*_latest.zip
+        mkdir -p $ANDROID_HOME/cmdline-tools/latest
+        mv -fv cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest
+        yes | sdkmanager --licenses
+    fi
+
+    sdkmanager_install() {
+        package=${*}
+        if !(sdkmanager --list_installed | grep $package 1>/dev/null 2>&1); then
+            sdkmanager --install "${package}"
+        fi
+    }
+    sdkmanager_install "build-tools;34.0.0"
+    sdkmanager_install "emulator"
+    sdkmanager_install "platform-tools"
+    sdkmanager_install "platforms;android-34"
+    sdkmanager_install "system-images;android-34;google_apis_playstore;x86_64"
+
+    if !(avdmanager list avd | grep emulator); then
+        echo "Creating avd: emulator"
+        avdmanager create avd -f -n emulator \
+            -k "system-images;android-34;google_apis_playstore;x86_64" \
+            -d "pixel_8_pro"
+        sed -i "s/^hw.keyboard=no/hw.keyboard=yes/" "/home/seshu/.android/avd/emulator.avd/config.ini"
+    fi
+    '
+fi
+
+task_complete
+sub_tasks "+" android
