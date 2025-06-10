@@ -332,7 +332,7 @@ if !(avdmanager list avd 2>/dev/null | grep emulator 1>/dev/null 2>&1); then
     }
     export ANDROID_HOME="$HOME/.local/android"
     update_bashrc "export ANDROID_HOME=$ANDROID_HOME"
-    update_bashrc "export PATH=\"\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/emulator:\$PATH\""
+    update_bashrc "export PATH=\"\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools:\$ANDROID_HOME/emulator:\$PATH\""
     source ~/.bashrc
 
     if !(which sdkmanager 2>/dev/null); then
