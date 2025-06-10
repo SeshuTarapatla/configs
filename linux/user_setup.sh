@@ -366,9 +366,12 @@ if !(avdmanager list avd 2>/dev/null | grep emulator 1>/dev/null 2>&1); then
     if !(avdmanager list avd | grep emulator); then
         echo "Creating avd: emulator"
         avdmanager create avd -f -n emulator \
-            -k "system-images;android-34;google_apis_playstore;x86_64" \
-            -d "pixel_8_pro"
+            -k "system-images;android-34;google_apis_playstore;x86_64"
         sed -i "s/^hw.keyboard=no/hw.keyboard=yes/" "/home/seshu/.android/avd/emulator.avd/config.ini"
+        sed -i "s/^hw.lcd.density=160/hw.lcd.density=480/" "/home/seshu/.android/avd/emulator.avd/config.ini"
+        sed -i "s/^hw.lcd.height=640/hw.lcd.height=2992/" "/home/seshu/.android/avd/emulator.avd/config.ini"
+        sed -i "s/^hw.lcd.width=320/hw.lcd.width=1344/" "/home/seshu/.android/avd/emulator.avd/config.ini"
+        sed -i "s/^vm.heapSize=32M/vm.heapSize=512M/" "/home/seshu/.android/avd/emulator.avd/config.ini"
     fi
     '
 fi
