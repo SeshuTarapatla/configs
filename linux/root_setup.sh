@@ -136,8 +136,8 @@ declare -A flatpaks
 declare -A urls
 
 rpms["akmod-nvidia"]="Nvidia Smi"
-rpms["asusctl"]="Asusctl CLI"
 rpms["asusctl-rog-gui"]="Asusctl GUI"
+rpms["asusctl"]="Asusctl CLI"
 rpms["bat"]="Bat"
 rpms["code"]="Visual Studio Code"
 rpms["fastfetch"]="Fast Fetch"
@@ -148,6 +148,7 @@ rpms["kernel-devel"]="Kernel Devel"
 rpms["rancher-desktop"]="Rancher Desktop"
 rpms["rog-control-center"]="ROG Control Center"
 rpms["supergfxctl"]="Supergfxctl"
+rpms["wmctrl"]="WMCtrl - X Window Manager"
 rpms["xorg-x11-drv-nvidia-cuda"]="Nvidia Packages"
 
 flatpaks["app.zen_browser.zen"]="Zen Browser"

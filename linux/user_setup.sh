@@ -289,6 +289,7 @@ code_exts["ms-python.python"]="Python"
 code_exts["ms-toolsai.jupyter"]="Jupyter"
 code_exts["njpwerner.autodocstring"]="Python Docstring Generator"
 code_exts["pkief.material-icon-theme"]="Material Icon Theme"
+code_exts["rpinski.shebang-snippets"]="Shebang Snippets"
 code_exts["usernamehw.errorlens"]="Error Lens"
 
 code_sets["1"]="User settings applied"
