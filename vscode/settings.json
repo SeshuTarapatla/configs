@@ -4,6 +4,10 @@
     "editor.fontFamily": "JetBrainsMono Nerd Font Mono",
     "editor.fontLigatures": true,
     "editor.wordWrap": "on",
+    "errorLens.enabled": true,
+    "errorLens.excludePatterns": [
+        "**/*.{ipynb}"
+    ],
     "explorer.confirmDelete": false,
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
