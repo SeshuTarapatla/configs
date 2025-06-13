@@ -4,14 +4,19 @@
     "editor.fontFamily": "JetBrainsMono Nerd Font Mono",
     "editor.fontLigatures": true,
     "editor.wordWrap": "on",
+    "explorer.confirmDelete": false,
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
+    "files.exclude": {
+        "**/__pycache__": true
+    },
     "git.autofetch": true,
     "git.enableSmartCommit": true,
     "jupyter.askForKernelRestart": false,
     "notebook.lineNumbers": "on",
     "python.analysis.autoFormatStrings": true,
     "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
     "workbench.colorTheme": "Tokyo Night",
     "workbench.iconTheme": "material-icon-theme"
 }
